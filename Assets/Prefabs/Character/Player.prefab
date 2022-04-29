@@ -238,7 +238,7 @@ TrailRenderer:
   m_Time: 5
   m_Parameters:
     serializedVersion: 3
-    widthMultiplier: 0.5
+    widthMultiplier: 1
     widthCurve:
       serializedVersion: 2
       m_Curve:
@@ -360,7 +360,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 3d21b8a73e6e4461a9e0d434aca3b5a6, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  PlayerModel: {fileID: 7810301904727796138}
+  PlayerModel: {fileID: 7810301905018140048}
 --- !u!114 &7810301905714921374
 MonoBehaviour:
   m_ObjectHideFlags: 0

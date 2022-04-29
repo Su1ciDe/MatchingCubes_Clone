@@ -19,20 +19,21 @@ public class CubeController : MonoBehaviour
 	{
 		var addedCube = Instantiate(cubePrefab, transform);
 		addedCube.ChangeColor(collectableCube.CubeColor, collectableCube.Material);
+		addedCube.IsInStack = true;
 
 		if (isAnimated)
-			addedCube.transform.DOScale(0, .5f).From().SetEase(Ease.OutExpo);
+			addedCube.transform.DOScale(0, .5f).From().SetEase(Ease.OutBack);
 
 		int count = Cubes.Count;
 		for (int i = 0; i < count; i++)
 		{
 			var cube = Cubes[i];
 			cube.transform.DOComplete();
-			cube.transform.DOLocalJump(cube.transform.localPosition + cubeSize * Vector3.up, 1 + (count - i) / 2f, 1, .5f);
+			cube.transform.DOLocalJump(cube.transform.localPosition + cubeSize * Vector3.up, (count - i) / 2f, 1, .5f);
 		}
 
 		player.PlayerModel.DOComplete();
-		player.PlayerModel.DOLocalJump(player.PlayerModel.localPosition + cubeSize * Vector3.up, 1 + count / 2f, 1, .5f);
+		player.PlayerModel.DOLocalJump(player.PlayerModel.localPosition + cubeSize * Vector3.up, count / 2f, 1, .5f);
 
 		Cubes.Add(addedCube);
 
@@ -41,10 +42,26 @@ public class CubeController : MonoBehaviour
 		CheckMatch();
 	}
 
-	public void RemoveCube(Cube cube = null)
+	public void RemoveCube(List<Cube> removedCubes)
 	{
-		player.SetActiveTrail(Cubes.Count > 0);
+		foreach (Cube removedCube in removedCubes)
+		{
+			Cubes.Remove(removedCube);
+			Destroy(removedCube.gameObject);
+		}
 
+		int count = Cubes.Count;
+		for (int i = 0; i < count; i++)
+		{
+			Cube cube = Cubes[i];
+			cube.transform.DOComplete();
+			cube.transform.DOLocalMoveY((count - i - 1) * cubeSize, .5f).SetDelay((count - i)/ 10f).SetEase(Ease.InExpo);
+		}
+
+		player.PlayerModel.transform.DOComplete();
+		player.PlayerModel.transform.DOLocalMoveY(count * cubeSize, .5f).SetDelay(count / 10f).SetEase(Ease.InExpo);
+
+		player.SetActiveTrail(Cubes.Count > 0);
 		ChangeTrail();
 
 		CheckMatch();
@@ -52,6 +69,30 @@ public class CubeController : MonoBehaviour
 
 	public void CheckMatch()
 	{
+		int count = Cubes.Count;
+		if (count < 3) return;
+		for (int i = count - 1; i > 1; i--)
+		{
+			if (Cubes[i].CubeColor.Equals(Cubes[i - 1].CubeColor) && Cubes[i].CubeColor.Equals(Cubes[i - 2].CubeColor))
+			{
+				Matched(new List<Cube> { Cubes[i], Cubes[i - 1], Cubes[i - 2] });
+				break;
+			}
+		}
+	}
+
+	private void Matched(List<Cube> cubes)
+	{
+		Sequence seq = DOTween.Sequence();
+		foreach (Cube cube in cubes)
+		{
+			cube.IsInStack = false;
+			cube.transform.DOComplete();
+			seq.Join(cube.transform.DOPunchScale(1.2f * Vector3.one, .5f, 2, .5f));
+		}
+
+		// seq.AppendInterval(.5f);
+		seq.AppendCallback(() => RemoveCube(cubes));
 	}
 
 	private void ChangeTrail()
@@ -59,7 +100,7 @@ public class CubeController : MonoBehaviour
 		if (Cubes.Count > 0)
 		{
 			player.SetActiveTrail(true);
-			player.ChangeTrailColor(Cubes[^1].MaterialColor);
+			player.ChangeTrailColor(Cubes[^1].Material.color);
 		}
 		else
 		{
