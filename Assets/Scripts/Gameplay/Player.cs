@@ -6,16 +6,19 @@ public class Player : Singleton<Player>
 	public PlayerController PlayerController { get; private set; }
 	public PlayerMovement PlayerMovement { get; private set; }
 	public CubeController CubeController { get; private set; }
-	public TrailRenderer Trail { get; private set; }
+
+	private TrailRenderer trail;
+	private Material trailMat;
 
 	private void Awake()
 	{
 		PlayerController = GetComponent<PlayerController>();
 		PlayerMovement = GetComponent<PlayerMovement>();
 		CubeController = GetComponentInChildren<CubeController>();
-		Trail = GetComponentInChildren<TrailRenderer>();
-	}
 
+		trail = GetComponentInChildren<TrailRenderer>();
+		trailMat = trail.sharedMaterial;
+	}
 
 	private void OnEnable()
 	{
@@ -47,5 +50,15 @@ public class Player : Singleton<Player>
 	{
 		PlayerController.CanPlay = false;
 		PlayerMovement.CanMove = false;
+	}
+
+	public void SetActiveTrail(bool isActive)
+	{
+		trail.emitting = isActive;
+	}
+
+	public void ChangeTrailColor(Color color)
+	{
+		trailMat.color = color;
 	}
 }

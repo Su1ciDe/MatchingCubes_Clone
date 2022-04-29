@@ -44,3 +44,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 88596e6c02bd66e4397dd0b448fd8e61, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  BlueMaterial: {fileID: 2100000, guid: b540b53c44a982e4483e0b63874de4b1, type: 2}
+  OrangeMaterial: {fileID: 2100000, guid: 531b2100a1664394894d1bde4d07d058, type: 2}
+  PurpleMaterial: {fileID: 2100000, guid: 514b0d75c2299994c95c26818e3c06cc, type: 2}
