@@ -13,7 +13,7 @@ public class CubeController : MonoBehaviour
 
 	private Player player => Player.Instance;
 
-	private readonly float cubeSize = 1f;
+	public readonly float CubeSize = 1f;
 
 	public void AddCube(CollectableCube collectableCube, bool isAnimated = true)
 	{
@@ -29,11 +29,11 @@ public class CubeController : MonoBehaviour
 		{
 			var cube = Cubes[i];
 			cube.transform.DOComplete();
-			cube.transform.DOLocalJump(cube.transform.localPosition + cubeSize * Vector3.up, (count - i) / 2f, 1, .5f);
+			cube.transform.DOLocalJump(cube.transform.localPosition + CubeSize * Vector3.up, (count - i) / 2f, 1, .5f);
 		}
 
 		player.PlayerModel.DOComplete();
-		player.PlayerModel.DOLocalJump(player.PlayerModel.localPosition + cubeSize * Vector3.up, count / 2f, 1, .5f);
+		player.PlayerModel.DOLocalJump(player.PlayerModel.localPosition + CubeSize * Vector3.up, count / 2f, 1, .5f);
 
 		Cubes.Add(addedCube);
 
@@ -55,11 +55,11 @@ public class CubeController : MonoBehaviour
 		{
 			Cube cube = Cubes[i];
 			cube.transform.DOComplete();
-			cube.transform.DOLocalMoveY((count - i - 1) * cubeSize, .5f).SetDelay((count - i)/ 10f).SetEase(Ease.InExpo);
+			cube.transform.DOLocalMoveY((count - i - 1) * CubeSize, .5f).SetDelay((count - i)/ 10f).SetEase(Ease.InExpo);
 		}
 
 		player.PlayerModel.transform.DOComplete();
-		player.PlayerModel.transform.DOLocalMoveY(count * cubeSize, .5f).SetDelay(count / 10f).SetEase(Ease.InExpo);
+		player.PlayerModel.transform.DOLocalMoveY(count * CubeSize, .5f).SetDelay(count / 10f).SetEase(Ease.InExpo);
 
 		player.SetActiveTrail(Cubes.Count > 0);
 		ChangeTrail();
@@ -90,12 +90,10 @@ public class CubeController : MonoBehaviour
 			cube.transform.DOComplete();
 			seq.Join(cube.transform.DOPunchScale(1.2f * Vector3.one, .5f, 2, .5f));
 		}
-
-		// seq.AppendInterval(.5f);
 		seq.AppendCallback(() => RemoveCube(cubes));
 	}
 
-	private void ChangeTrail()
+	public void ChangeTrail()
 	{
 		if (Cubes.Count > 0)
 		{
