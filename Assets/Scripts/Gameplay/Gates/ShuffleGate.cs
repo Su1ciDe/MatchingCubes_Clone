@@ -15,6 +15,7 @@ public class ShuffleGate : Gate
 			(cubes[k], cubes[count]) = (cubes[count], cubes[k]);
 		}
 
+		enteredPlayer.CubeController.CheckMatch();
 		enteredPlayer.CubeController.ChangeTrail();
 	}
 }
