@@ -256,8 +256,8 @@ TrailRenderer:
       m_RotationOrder: 4
     colorGradient:
       serializedVersion: 2
-      key0: {r: 1, g: 1, b: 1, a: 1}
-      key1: {r: 1, g: 1, b: 1, a: 1}
+      key0: {r: 1, g: 1, b: 1, a: 0.78431374}
+      key1: {r: 1, g: 1, b: 1, a: 0.78431374}
       key2: {r: 0, g: 0, b: 0, a: 0}
       key3: {r: 0, g: 0, b: 0, a: 0}
       key4: {r: 0, g: 0, b: 0, a: 0}
@@ -388,6 +388,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   moveSpeed: 500
   moveSpeedMultiplier: 1
+  feverMultiplier: 2
+  feverDuration: 4
 --- !u!1 &7810301905732048817
 GameObject:
   m_ObjectHideFlags: 0
@@ -479,4 +481,4 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   cubePrefab: {fileID: 1449803767454370033, guid: a5c5242c2673321428f034d30dc402c8, type: 3}
-  startingCubes: 
+  matchCountForFever: 3

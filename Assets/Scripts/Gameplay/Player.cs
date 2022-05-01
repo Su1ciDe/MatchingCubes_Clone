@@ -2,12 +2,13 @@
 
 public class Player : Singleton<Player>
 {
+	
 	public Transform PlayerModel;
 	public PlayerController PlayerController { get; private set; }
 	public PlayerMovement PlayerMovement { get; private set; }
 	public CubeController CubeController { get; private set; }
 
-	private TrailRenderer trail;
+	public TrailRenderer Trail { get; private set; }
 	private Material trailMat;
 
 	private void Awake()
@@ -16,8 +17,8 @@ public class Player : Singleton<Player>
 		PlayerMovement = GetComponent<PlayerMovement>();
 		CubeController = GetComponentInChildren<CubeController>();
 
-		trail = GetComponentInChildren<TrailRenderer>();
-		trailMat = trail.sharedMaterial;
+		Trail = GetComponentInChildren<TrailRenderer>();
+		trailMat = Trail.sharedMaterial;
 	}
 
 	private void OnEnable()
@@ -54,7 +55,7 @@ public class Player : Singleton<Player>
 
 	public void SetActiveTrail(bool isActive)
 	{
-		trail.emitting = isActive;
+		Trail.emitting = isActive;
 	}
 
 	public void ChangeTrailColor(Color color)

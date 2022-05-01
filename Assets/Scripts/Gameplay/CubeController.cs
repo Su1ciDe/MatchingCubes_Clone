@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System.Collections;
+using System.Collections.Generic;
 using DG.Tweening;
 using UnityEngine;
 
@@ -9,11 +10,13 @@ public class CubeController : MonoBehaviour
 	public List<Cube> Cubes { get; set; } = new List<Cube>();
 
 	[Space]
-	[SerializeField] private List<CubeColor> startingCubes = new List<CubeColor>();
+	[SerializeField] private int matchCountForFever = 3;
+	private int currentMatchCount;
 
 	private Player player => Player.Instance;
 
 	public readonly float CubeSize = 1f;
+	private readonly float matchTimer = 1f;
 
 	public void AddCube(CollectableCube collectableCube, bool isAnimated = true)
 	{
@@ -27,9 +30,9 @@ public class CubeController : MonoBehaviour
 		int count = Cubes.Count;
 		for (int i = 0; i < count; i++)
 		{
-			var cube = Cubes[i];
-			cube.transform.DOComplete();
-			cube.transform.DOLocalJump(cube.transform.localPosition + CubeSize * Vector3.up, (count - i) / 2f, 1, .5f);
+			var cube = Cubes[i].transform;
+			cube.DOComplete();
+			cube.DOLocalJump(cube.localPosition + CubeSize * Vector3.up, (count - i) / 2f, 1, .5f);
 		}
 
 		player.PlayerModel.DOComplete();
@@ -42,12 +45,12 @@ public class CubeController : MonoBehaviour
 		CheckMatch();
 	}
 
-	public void RemoveCube(List<Cube> removedCubes)
+	public void RemoveCube(List<Cube> removedCubes, float destroyTime = 0)
 	{
 		foreach (Cube removedCube in removedCubes)
 		{
 			Cubes.Remove(removedCube);
-			Destroy(removedCube.gameObject);
+			Destroy(removedCube.gameObject, destroyTime);
 		}
 
 		int count = Cubes.Count;
@@ -55,13 +58,12 @@ public class CubeController : MonoBehaviour
 		{
 			Cube cube = Cubes[i];
 			cube.transform.DOComplete();
-			cube.transform.DOLocalMoveY((count - i - 1) * CubeSize, .5f).SetDelay((count - i)/ 10f).SetEase(Ease.InExpo);
+			cube.transform.DOLocalMoveY((count - i - 1) * CubeSize, .5f).SetDelay((count - i) / 20f).SetEase(Ease.InExpo);
 		}
 
 		player.PlayerModel.transform.DOComplete();
-		player.PlayerModel.transform.DOLocalMoveY(count * CubeSize, .5f).SetDelay(count / 10f).SetEase(Ease.InExpo);
+		player.PlayerModel.transform.DOLocalMoveY(count * CubeSize, .5f).SetDelay(count / 20f).SetEase(Ease.InExpo);
 
-		player.SetActiveTrail(Cubes.Count > 0);
 		ChangeTrail();
 
 		CheckMatch();
@@ -83,6 +85,10 @@ public class CubeController : MonoBehaviour
 
 	private void Matched(List<Cube> cubes)
 	{
+		currentMatchCount++;
+		StopCoroutine(MatchIntervalWindow());
+		StartCoroutine(MatchIntervalWindow());
+		
 		Sequence seq = DOTween.Sequence();
 		foreach (Cube cube in cubes)
 		{
@@ -90,7 +96,17 @@ public class CubeController : MonoBehaviour
 			cube.transform.DOComplete();
 			seq.Join(cube.transform.DOPunchScale(1.2f * Vector3.one, .5f, 2, .5f));
 		}
-		seq.AppendCallback(() => RemoveCube(cubes));
+
+		seq.AppendCallback(() =>
+		{
+			RemoveCube(cubes);
+
+			if (currentMatchCount >= matchCountForFever)
+			{
+				currentMatchCount = 0;
+				player.PlayerMovement.FeverMode();
+			}
+		});
 	}
 
 	public void ChangeTrail()
@@ -104,5 +120,12 @@ public class CubeController : MonoBehaviour
 		{
 			player.SetActiveTrail(false);
 		}
+	}
+
+	private IEnumerator MatchIntervalWindow()
+	{
+		yield return new WaitForSeconds(matchTimer);
+
+		currentMatchCount = 0;
 	}
 }
