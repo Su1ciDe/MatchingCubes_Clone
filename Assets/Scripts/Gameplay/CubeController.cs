@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using DG.Tweening;
 using UnityEngine;
+using UnityEngine.Events;
 
 public class CubeController : MonoBehaviour
 {
@@ -13,10 +14,16 @@ public class CubeController : MonoBehaviour
 	[SerializeField] private int matchCountForFever = 3;
 	private int currentMatchCount;
 
-	private Player player => Player.Instance;
+	[Space]
+	[SerializeField] private int matchReward = 1;
+
+
+private Player player => Player.Instance;
 
 	public readonly float CubeSize = 1f;
 	private readonly float matchTimer = 1f;
+
+	public static event UnityAction<Cube> OnCubeMatch; 
 
 	public void AddCube(CollectableCube collectableCube, bool isAnimated = true)
 	{
@@ -85,6 +92,8 @@ public class CubeController : MonoBehaviour
 
 	private void Matched(List<Cube> cubes)
 	{
+		Player.Diamond += matchReward;
+		
 		currentMatchCount++;
 		StopCoroutine(MatchIntervalWindow());
 		StartCoroutine(MatchIntervalWindow());
@@ -99,6 +108,8 @@ public class CubeController : MonoBehaviour
 
 		seq.AppendCallback(() =>
 		{
+			OnCubeMatch?.Invoke(cubes[0]);
+			
 			RemoveCube(cubes);
 
 			if (currentMatchCount >= matchCountForFever)

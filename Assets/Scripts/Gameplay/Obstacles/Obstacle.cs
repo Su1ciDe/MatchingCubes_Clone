@@ -10,7 +10,12 @@ public abstract class Obstacle : MonoBehaviour
 		{
 			isTriggered = true;
 			if (!Player.Instance.PlayerMovement.IsFeverMode)
-				OnEnterObstacle(cube);
+			{
+				if (Player.Instance.CubeController.Cubes.Count > 0)
+					OnEnterObstacle(cube);
+				else
+					LevelManager.Instance.GameFail();
+			}
 			else
 				OnEnterObstacleWhileFeverMode(cube);
 		}

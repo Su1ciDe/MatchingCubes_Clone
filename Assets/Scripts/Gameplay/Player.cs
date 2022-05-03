@@ -2,6 +2,11 @@
 
 public class Player : Singleton<Player>
 {
+	public static int Diamond
+	{
+		get => PlayerPrefs.GetInt("Diamond", 0);
+		set => PlayerPrefs.SetInt("Diamond", value);
+	}
 	
 	public Transform PlayerModel;
 	public PlayerController PlayerController { get; private set; }
