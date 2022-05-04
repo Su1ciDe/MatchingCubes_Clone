@@ -124,8 +124,8 @@ private Player player => Player.Instance;
 	{
 		if (Cubes.Count > 0)
 		{
+			player.ChangeTrailColor(Cubes[^1].CubeColor);
 			player.SetActiveTrail(true);
-			player.ChangeTrailColor(Cubes[^1].Material.color);
 		}
 		else
 		{

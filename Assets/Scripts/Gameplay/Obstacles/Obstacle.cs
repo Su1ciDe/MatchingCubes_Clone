@@ -6,7 +6,7 @@ public abstract class Obstacle : MonoBehaviour
 
 	public void OnTriggerEnter(Collider other)
 	{
-		if (!isTriggered && other.transform.parent && other.transform.parent.TryGetComponent(out Cube cube))
+		if (!isTriggered && other.transform.parent && other.transform.parent.TryGetComponent(out Cube cube) && cube.IsInStack)
 		{
 			isTriggered = true;
 			if (!Player.Instance.PlayerMovement.IsFeverMode)

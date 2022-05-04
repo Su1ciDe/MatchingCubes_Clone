@@ -7,23 +7,23 @@ public class Player : Singleton<Player>
 		get => PlayerPrefs.GetInt("Diamond", 0);
 		set => PlayerPrefs.SetInt("Diamond", value);
 	}
-	
+
 	public Transform PlayerModel;
 	public PlayerController PlayerController { get; private set; }
 	public PlayerMovement PlayerMovement { get; private set; }
 	public CubeController CubeController { get; private set; }
 
+	[Header("Trail")]
+	[SerializeField] private TrailRenderer blueTrail;
+	[SerializeField] private TrailRenderer orangeTrail;
+	[SerializeField] private TrailRenderer purpleTrail;
 	public TrailRenderer Trail { get; private set; }
-	private Material trailMat;
 
 	private void Awake()
 	{
 		PlayerController = GetComponent<PlayerController>();
 		PlayerMovement = GetComponent<PlayerMovement>();
 		CubeController = GetComponentInChildren<CubeController>();
-
-		Trail = GetComponentInChildren<TrailRenderer>();
-		trailMat = Trail.sharedMaterial;
 	}
 
 	private void OnEnable()
@@ -63,8 +63,20 @@ public class Player : Singleton<Player>
 		Trail.emitting = isActive;
 	}
 
-	public void ChangeTrailColor(Color color)
+	public void ChangeTrailColor(CubeColor color)
 	{
-		trailMat.color = color;
+		blueTrail.emitting = false;
+		orangeTrail.emitting = false;
+		purpleTrail.emitting = false;
+
+		Trail = color switch
+		{
+			CubeColor.Blue => blueTrail,
+			CubeColor.Orange => orangeTrail,
+			CubeColor.Purple => purpleTrail,
+			_ => Trail
+		};
+
+		Trail.emitting = true;
 	}
 }
